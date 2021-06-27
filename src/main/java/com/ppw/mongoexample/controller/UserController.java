@@ -3,6 +3,8 @@ package com.ppw.mongoexample.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -32,6 +34,7 @@ public class UserController {
 
    @ResponseStatus(HttpStatus.CREATED)
    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+   @CachePut(cacheNames = "product", key = "123")
    public User createUser(@RequestBody User user) {
       return userRepository.save(user);
    }
@@ -138,10 +141,14 @@ public class UserController {
 
    /**
     * 利用mongoTemplate进行复杂查询
+    * cacheNames + key,共同作为缓存的key
+    * key:
+    * unless: 不进行缓存的情况
     * @param user
     * @return
     */
    @GetMapping(value="/list/find")
+   @Cacheable(cacheNames = "product", key = "#user.userName",unless = "#result.size()<=0")
    public List<User> findByMultiple(@ModelAttribute("user") User user){
       Query query = new Query();
       Criteria criteria =new Criteria();

@@ -1,6 +1,9 @@
 package com.ppw.mongoexample.model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
+   private static final long serialVersionUID = 6399186181668983148L;
    
    private String id;
    private String userName;
